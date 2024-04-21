@@ -24,9 +24,11 @@ def index():
 
 
 @app.route("/user")
-@login_required
 def user():
-    return render_template("show_user.html", title="В системе:", user=flask_login.current_user)
+    if (flask_login.current_user.is_authenticated):
+        return render_template("show_user.html", title="В системе:", user=flask_login.current_user)
+    else:
+        return
 
 
 @app.route("/find_game")

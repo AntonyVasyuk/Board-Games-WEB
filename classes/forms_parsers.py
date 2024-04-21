@@ -16,7 +16,7 @@ def login():
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/")
+            return redirect("/user")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
@@ -32,11 +32,16 @@ def register():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
 
-        user = User()
-        user.name = form.username.data
-        user.about = form.about.data
-        user.email = form.email.data
-        user.hashed_password = form.password.data
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            form.email.errors.append("Введенный email уже используется")
+            return render_template('register.html', title='Регистрация', form=form)
+
+        user = User(
+            name=form.username.data,
+            about=form.about.data,
+            email=form.email.data,
+        )
+        user.set_password(form.password.data)
         db_sess = db_session.create_session()
         db_sess.add(user)
         db_sess.commit()
