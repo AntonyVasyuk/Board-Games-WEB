@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h1>Регистрация</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {% for field in [form.username, form.email , form.password , form.confirm_password , form.about] %}
+            <p>
+                {{ field.label }}<br>
+                {% if field in ["password", "confirm_password"] %}
+                    {{ field(class="form-control", type="password") }}
+                {% else %}
+                    {{ field(class="form-control") }}
+                {% endif %}
+                <br>
+                {% for error in field.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+        {% endfor %}
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        <div>{{ message }}</div>
+    </form>
+{% endblock %}
