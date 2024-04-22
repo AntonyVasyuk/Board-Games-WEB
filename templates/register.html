@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>Регистрация</h1>
+    <h1>Registration</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         {% for field in [form.username, form.email , form.password , form.confirm_password , form.about] %}
