@@ -40,7 +40,7 @@ def render_template_new(*args, **kwargs):
 def authorised_only(f):
     @wraps(f)
     def wrapper_f(*args, **kwargs):
-        if (type(flask_login.current_user) in [AnonymousUserMixin]):
+        if (not flask_login.current_user.is_authenticated):
             return render_template_new("401.html", title="Error 401")
         else:
             return f(*args, **kwargs)
@@ -56,6 +56,7 @@ def redirect_if_playing(f):
             to_game = f"/game/{g.join_code}"
             print(flask.request.path)
             if (flask.request.path != to_game):
+                # pass
                 return redirect(to_game)
         else:
             return f(*args, **kwargs)
@@ -117,9 +118,9 @@ def load_user(user_id):
 def index():
     return render_template_new("base.html", title="index")
 
-
 @app.route("/")
-@redirect_if_playing
+@authorised_only
+# @redirect_if_playing
 def main_page():
     return render_template_new("main.html", title="Main page")
 
@@ -132,8 +133,8 @@ def user():
 
 
 @app.route("/find_game")
-@authorised_only
 @redirect_if_playing
+@authorised_only
 def find_game():
     return render_template_new("find_game.html", title="Find game", games=games, update_time=refresh_time)
 
@@ -148,7 +149,6 @@ def game(key):
         to_game = f"/game/{g.join_code}"
         print(flask.request.path)
         if (flask.request.path != to_game):
-            # pass
             return redirect(to_game)
 
         # return "1"
@@ -170,10 +170,10 @@ def game(key):
 
 @app.route("/logout")
 @authorised_only
-@redirect_if_playing
+# @redirect_if_playing
 def logout():
     flask_login.logout_user()
-    return redirect("./main")
+    return redirect("./")
 
 
 # from classes.forms_parsers import *
