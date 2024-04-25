@@ -56,9 +56,8 @@ class Game:
     def default_field(self, n, t):
         self.size = n
         self.type = t
-        match t:
-            case "CHESS":
-                self.field = copy.deepcopy(chess)
+        if (t == "CHESS"):
+            self.field = copy.deepcopy(chess)
 
     def make_move(self, s, f=None):
         if (f is not None):
