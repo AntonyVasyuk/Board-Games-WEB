@@ -20,6 +20,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 games = [Chess(i) for i in range(3)]
+users_emails = []
 refresh_time = 5000
 
 
@@ -49,9 +50,13 @@ def join_cur_user_in_to_game(game):
     }
     session["current_user"] = data
 
+
 def quit_cur_user_from_game():
     user = current_user()
-    del user.game.users[user.game.users.index(user)]
+    if (user.game is not None and user in user.game.users):
+        del user.game.users[user.game.users.index(user)]
+    else:
+        return
 
     if (not user.game.users):
         print("*")
@@ -65,6 +70,7 @@ def quit_cur_user_from_game():
     }
     session["current_user"] = data
 
+
 def login_user(user):
     data = {
         "name": user.name,
@@ -73,9 +79,13 @@ def login_user(user):
         "game": None
     }
     session["current_user"] = data
+    users_emails.append(user.email)
 
 
 def logout_user():
+    quit_cur_user_from_game()
+    if (current_user().email in users_emails):
+        del users_emails[users_emails.index(current_user().email)]
     session["current_user"] = None
 
 
@@ -126,13 +136,13 @@ def login():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.email == form.email.data).first()
-        if user and user.check_password(form.password.data):
+        if user and user.check_password(form.password.data) and user.email not in users_emails:
             login_user(user)
             return redirect("/user")
         return render_template_new('login.html',
-                                   message="Неправильный логин или пароль",
+                                   message="Wrong password or login or user is already logged",
                                    form=form)
-    return render_template_new('login.html', title='Авторизация', form=form)
+    return render_template_new('login.html', title='Authorisation', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -143,8 +153,8 @@ def register():
         db_sess = db_session.create_session()
 
         if db_sess.query(User).filter(User.email == form.email.data).first():
-            form.email.errors.append("Введенный email уже используется")
-            return render_template_new('register.html', title='Регистрация', form=form)
+            form.email.errors.append("Email is already using")
+            return render_template_new('register.html', title='Registration', form=form)
 
         user = User(
             name=form.username.data,
@@ -158,7 +168,7 @@ def register():
         db_sess.commit()
         login_user(user)
         return redirect("/find_game")
-    return render_template_new('register.html', title='Регистрация', form=form)
+    return render_template_new('register.html', title='Registration', form=form)
 
 
 @login_manager.user_loader
