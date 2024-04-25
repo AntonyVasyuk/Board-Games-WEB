@@ -5,12 +5,12 @@
     {% for game in games %}
 
         <div class="col-md6 border rounded">
-        <h2>Game {{ game.id }}</h2>
+        <h2>Game {{ game.id + 1 }}</h2>
 
         <h3>Playing:</h3>
 
-        {% if game.players %}
-            {% for user in game.players %}
+        {% if game.users %}
+            {% for user in game.users %}
                 {{ user.name }}
             {% endfor %}
         {% else %}
@@ -18,7 +18,7 @@
         {% endif %}
 
         <br>
-        <a href="../game/{{ game.join_code }}">
+        <a href="../game/{{ game.join_key }}">
             <button class="btn">Join</button>
         </a>
         </div>

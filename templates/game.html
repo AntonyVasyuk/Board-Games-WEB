@@ -1,5 +1,62 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1>You're in the game №{{ game.id }}</h1>
+    {% set opponent = "Nobody" %}
+    {% for u in game.users %}
+        {% if not u.email == user.email %}
+            <h3>Your opponent: {{ u.name }}</h3>
+        {% elif loop.index0 != loop.last %}
+            <h3>Your opponent: Nobody</h3>
+        {% endif %}
+    {% endfor %}
+
+    <br>
+
+    <table cellpadding=0>
+
+        {% for i in range(game.size) %}
+            <tr>
+
+                {% for j in range(game.size) %}
+                    <td>
+
+                        <a href="/game/{{ game.join_key }}/choose/{{ i }}/{{ j }}">
+                            {% if (i + j) % 2 == 0 %}
+                                {% set bg = "white" %}
+                            {% else  %}
+                                {% set bg = "gray" %}
+                            {% endif %}
+
+                            <button style="background-color: {{ bg }};">
+                                <img src="../static/img/chess/{{ game.field[i][j] }}.png" width=50, height=50>
+                            </button>
+
+                        </a>
+
+                    </td>
+                {% endfor %}
+
+            </tr>
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <a href="/quit_game">
+        <button class="btn-danger">Quit game</button>
+    </a>
+
+    {% if user in game.users%}
+
+        <script>
+            function sleep(ms) {
+              return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            sleep({{ update_time }}).then(() => { window.location.reload(); });
+        </script>
+
+    {% endif %}
+
 {% endblock %}

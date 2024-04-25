@@ -18,6 +18,8 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
+    game = None
+
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -25,4 +27,8 @@ class User(SqlAlchemyBase, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
 
+    def join_game(self, game):
+        self.game = game
 
+    def __eq__(self, other):
+        return self.email == other.email
