@@ -20,7 +20,6 @@ class User(SqlAlchemyBase, UserMixin):
                                      default=datetime.datetime.now)
     game = None
 
-
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
 

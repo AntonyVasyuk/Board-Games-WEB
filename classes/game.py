@@ -3,7 +3,6 @@ import pprint
 from copy import deepcopy
 from random import randint
 
-
 empty = "empty"
 
 w_paw = "w_paw"
@@ -19,7 +18,6 @@ b_knight = "b_knight"
 b_bishop = "b_bishop"
 b_king = "b_king"
 b_queen = "b_queen"
-
 
 chess = [
     [w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook],

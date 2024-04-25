@@ -12,8 +12,6 @@ from classes.register_form import RegisterForm
 from data import db_session
 from data.users import User
 
-from classes.game import Game
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
@@ -36,7 +34,6 @@ def current_user():
         if (data["game"] is not None):
             user.game = games[data["game"]]
 
-    # print(user.game)
     return user
 
 
@@ -59,7 +56,6 @@ def quit_cur_user_from_game():
         return
 
     if (not user.game.users):
-        print("*")
         user.game.reset_field()
 
     data = {
@@ -93,7 +89,6 @@ def is_cur_user_in_game():
     g = None
     for game in games:
         if (current_user() is not None and current_user() in game.users):
-            # print([user.name for user in game.users], '|', current_user().name)
             g = game
             break
     return g
@@ -184,7 +179,6 @@ def index():
 
 
 @app.route("/")
-# @authorised_only
 @redirect_if_playing
 def main_page():
     return render_template_new("main.html", title="Main page")
@@ -207,7 +201,6 @@ def find_game():
 @app.route("/game/<int:key>/")
 @app.route("/game/<int:key>")
 @authorised_only
-# @redirect_if_playing
 def game(key):
     g = is_cur_user_in_game()
     if (g):
@@ -216,7 +209,6 @@ def game(key):
         if (flask.request.path != to_game):
             return redirect(to_game)
 
-        # return "1"
         return render_template_new("game.html", game=g, update_time=refresh_time)
     else:
         keys = [g.join_key for g in games]
@@ -239,7 +231,6 @@ def quit_game():
 
 @app.route("/logout")
 @authorised_only
-# @redirect_if_playing
 def logout():
     logout_user()
     return redirect("/")
@@ -252,12 +243,8 @@ def choose(key, i, j):
     return redirect("../..")
 
 
-# from classes.forms_parsers import *
-
-
 def main():
     db_session.global_init("db/tictactoe.db")
-    # session["current_user"] = None
     port = int(os.environ.get("PORT", 5000))
     app.run(host="127.0.0.1", port=port)
 
